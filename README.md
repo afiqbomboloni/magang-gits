@@ -1,10 +1,12 @@
 ﻿# Magang GITS Seleksi
  
  **Tugas Satu**
-Jalankan `php test1.php`
+ 
+- Jalankan `php test1.php`
 
 **Tugas Dua**
-Jalankan `php test2.php`
+
+- Jalankan `php test2.php`
 
 **Tugas Tiga (Back-end)**
 
