@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../../models");
 const Book = db.books;
 const Publisher = db.publishers;
 
@@ -24,7 +24,7 @@ exports.create = (req, res) => {
     // Save in db
     Book.create(book)
         .then(data => {
-            res.send(data)
+            res.status(201).send(data)
         })
         .catch(err => {
             res.status(500).send({
@@ -38,10 +38,55 @@ exports.create = (req, res) => {
 
 // Retrieve all Books from the database.
 exports.findAll = (req, res) => {
-    const judul = req.query.judul;
-    var condition = judul ? { judul: { [Op.iLike]: `%${judul}%` } } : null;
-  
-    Book.findAll({ where: condition })
+    
+
+  let {filter, sort, pagination} = req.query
+  let paramQuery = {}
+  let limit
+  let offset
+
+  // filtering
+  if (filter !== '' && typeof filter !== 'undefined') {
+    const query = filter.book.split(',').map((item) => ({
+      [Op.eq]: item,
+    }));
+
+    paramQuery.where = {
+      id: { [Op.or]: query },
+    };
+  }
+
+  // sorting
+  if(sort !== '' && typeof sort !== 'undefined') {
+    let query;
+    if(sort.charAt(0) !== '-') {
+      query = [[sort, 'ASC']]
+    } else {
+      query = [[sort.replace('-', ''), 'DESC']]
+    }
+
+    paramQuery.order = query
+
+  }
+
+  // pagination
+  if(pagination !== '' && typeof pagination !== 'undefined' ) {
+    if(pagination.size !== '' && typeof pagination.size !== 'undefined') {
+      limit = pagination.size
+      paramQuery.limit = limit
+    }
+
+    if(pagination.number !== '' && typeof pagination.number !== 'undefined') {
+      offset = pagination.number * limit - limit
+      paramQuery.offset = offset
+    }
+  } else {
+    limit = 4
+    offset = 0
+    paramQuery.limit = limit
+    paramQuery.offset = offset
+  }
+    Book.findAll(paramQuery)
       .then(data => {
         res.send(data);
       })

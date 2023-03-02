@@ -1,7 +1,7 @@
 const {authJwt} = require("../middleware")
 
 module.exports = app => {
-    const publishers = require("../controllers/publisher.controller.js");
+    const publishers = require("../v1/controllers/publisher.controller.js");
   
     var router = require("express").Router();
 
@@ -40,5 +40,5 @@ module.exports = app => {
     publishers.delete);
   
   
-    app.use('/api/publishers', router);
+    app.use('/api/v1/publishers', router);
   };

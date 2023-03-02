@@ -1,7 +1,7 @@
 const {authJwt} = require("../middleware")
 
 module.exports = app => {
-    const books = require("../controllers/book.controller.js");
+    const books = require("../v1/controllers/book.controller.js");
   
     var router = require("express").Router();
 
@@ -45,5 +45,5 @@ module.exports = app => {
     books.getBookPublisher);
   
   
-    app.use('/api/books', router);
+    app.use('/api/v1/books', router);
   };

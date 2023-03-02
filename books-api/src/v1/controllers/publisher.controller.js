@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../../models");
 const Publisher = db.publishers;
 
 const Op = db.Sequelize.Op;
@@ -22,7 +22,7 @@ exports.create = (req, res) => {
     // Save in db
     Publisher.create(publisher)
         .then(data => {
-            res.send(data)
+            res.status(201).send(data)
         })
         .catch(err => {
             res.status(500).send({
@@ -36,10 +36,55 @@ exports.create = (req, res) => {
 
 // Retrieve all Publishers from the database.
 exports.findAll = (req, res) => {
-    const nama = req.query.nama;
-    var condition = nama ? { nama: { [Op.iLike]: `%${nama}%` } } : null;
+    
+  let {filter, sort, pagination} = req.query
+  let paramQuery = {}
+  let limit
+  let offset
+
+  // filtering
+  if (filter !== '' && typeof filter !== 'undefined') {
+    const query = filter.publisher.split(',').map((item) => ({
+      [Op.eq]: item,
+    }));
+
+    paramQuery.where = {
+      id: { [Op.or]: query },
+    };
+  }
+
+  // sorting
+  if(sort !== '' && typeof sort !== 'undefined') {
+    let query;
+    if(sort.charAt(0) !== '-') {
+      query = [[sort, 'ASC']]
+    } else {
+      query = [[sort.replace('-', ''), 'DESC']]
+    }
+
+    paramQuery.order = query
+
+  }
+
+  // pagination
+  if(pagination !== '' && typeof pagination !== 'undefined' ) {
+    if(pagination.size !== '' && typeof pagination.size !== 'undefined') {
+      limit = pagination.size
+      paramQuery.limit = limit
+    }
+
+    if(pagination.number !== '' && typeof pagination.number !== 'undefined') {
+      offset = pagination.number * limit - limit
+      paramQuery.offset = offset
+    }
+  } else {
+    limit = 4
+    offset = 0
+    paramQuery.limit = limit
+    paramQuery.offset = offset
+  }
   
-    Publisher.findAll({ where: condition })
+    Publisher.findAll(paramQuery)
       .then(data => {
         res.send(data);
       })
@@ -121,19 +166,3 @@ exports.delete = (req, res) => {
         });
       });
   };
-
-// // get one to many
-
-// exports.getAuthorBooks = async (req, res) => {
-//   const id = req.params.id
-
-//   const data = await Author.findOne({
-//     include: [{
-//       model: Book,
-//       as: "book"
-//     }],
-//     where: {id: id}
-//   })
-
-//   res.status(200).send(data)
-// }

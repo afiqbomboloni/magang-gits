@@ -4,10 +4,26 @@ const db = require("../models");
 const User = db.user;
 
 verifyToken = (req, res, next) => {
-  let token = req.session.token;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if(!authHeader) {
+    return res.status(403).send({
+      message: "Tidak ada token yang tersedia",
+    });
+  }
+  if(authHeader.split(' ')[0] !== 'Bearer') {
+    return res.status(400).send({
+      auth: false,
+      message: "Incorrect token format"
+    })
+  }
+
+
+
 
   if (!token) {
-    return res.status(403).send({
+    return res.status(400).send({
       message: "Tidak ada token yang tersedia",
     });
   }
@@ -34,7 +50,7 @@ isAdmin = async (req, res, next) => {
       }
     }
 
-    return res.status(403).send({
+    return res.status(401).send({
       message: "Fitur hanya untuk admin",
     });
   } catch (error) {
