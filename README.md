@@ -14,4 +14,5 @@
  2. Jalankan `node server.js`
 
 Link Collection Postman (Book-Magang)
-https://www.postman.com/supply-explorer-39415862/workspace/my-workspace/collection/22889851-c2c230c1-6b80-47fc-885f-72699fea1d3c?action=share&creator=22889851
+https://elements.getpostman.com/redirect?entityId=22889851-c2c230c1-6b80-47fc-885f-72699fea1d3c&entityType=collection
+
