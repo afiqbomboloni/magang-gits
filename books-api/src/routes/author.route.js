@@ -11,7 +11,7 @@ module.exports = app => {
     );
     next();
   });
-  const authors = require("../controllers/author.controller.js");
+  const authors = require("../v1/controllers/author.controller.js");
   
     
   
@@ -47,5 +47,5 @@ module.exports = app => {
     authors.delete);
   
   
-    app.use('/api/authors', router);
+    app.use('/api/v1/authors', router);
   };
